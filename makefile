@@ -1,16 +1,17 @@
 CC := gcc
-CFLAGS := -std=c99 -O0 -Wall -Werror -Wpedantic -Wextra -Wfloat-equal -Wfloat-conversion -Iinc
+CFLAGS := -std=c99 -Wall -Werror -Wpedantic -Wextra -Wfloat-equal -Wfloat-conversion -Iinc
 LDFLAGS :=
 LDLIBS := -lm
-OBJS := ./out/process.o ./out/io.o
 SRCS := $(wildcard ./src/*.c)
 UNIT_SRCS := $(wildcard ./unit_tests/*.c)
+OBJS := $(patsubst ./src/%.c, ./out/%.o, $(filter-out ./src/main.c, $(SRCS)))
+MAIN_OBJ := ./out/main.o
 UNIT_OBJS := $(patsubst ./unit_tests/%.c, ./out/%.o, $(UNIT_SRCS))
 CHECK_LIBS := -lcheck -lm -lpthread -lrt
 
 vpath %.c src unit_tests
 
-.PHONY : clean debug release debug_asan debug_msan func all my_unit
+.PHONY : clean debug release debug_asan debug_msan func func_valgrind all my_unit
 .PHONY : debug_ubsan check build_coverage collect_coverage unit
 
 my_unit : CHECK_LIBS += -lsubunit
@@ -53,6 +54,9 @@ collect_coverage :
 func :
 	./func_tests/scripts/func_tests.sh
 
+func_valgrind :
+	./func_tests/scripts/func_tests.sh --valgrind
+
 all :
 	@$(MAKE) clean
 	@$(MAKE) build_coverage
@@ -63,7 +67,7 @@ all :
 unit_tests.exe : $(OBJS) $(UNIT_OBJS)
 	$(CC) $(LDFLAGS) $^ -o unit_tests.exe $(CHECK_LIBS)
 
-app.exe : $(OBJS) ./out/main.o
+app.exe : $(OBJS) $(MAIN_OBJ)
 	$(CC) $(LDFLAGS) $^ -o app.exe $(LDLIBS)
 
 ./out/%.o : %.c

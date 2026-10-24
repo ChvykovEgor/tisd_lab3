@@ -1,4 +1,4 @@
 .idea
-.d
-.o
-.exe
+*.d
+*.o
+*.exe

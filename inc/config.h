@@ -3,14 +3,24 @@
 
 #include <stdlib.h>
 
-#define N 1000
+#define MAX_MATR 1000
+#define MECHANIC_INPUT 1
+#define AUTO_INPUT 2
 
 typedef struct
 {
     size_t rows;
     size_t cols;
-    int matr[N][N];
-} MatrFull;
+    int matr[MAX_MATR][MAX_MATR];
+} Matr;
+
+typedef struct
+{
+    double fill;
+    double speedup;
+    double mem_gain;
+    int match;
+} BenchResult;
 
 typedef struct
 {
@@ -21,5 +31,18 @@ typedef struct
     size_t *ia;
     size_t *ja;
 } MatrCSC;
+
+typedef enum
+{
+    EXIT,
+    INPUT_FIRST_MATR,
+    INPUT_SECOND_MATR,
+    VIEW_FIRST_MATR,
+    VIEW_SECOND_MATR,
+    COMPRESSED_MATR_SUM,
+    FULL_MATR_SUM,
+    BENCHMARK,
+    NOT_CHOSEN
+} menu;
 
 #endif
