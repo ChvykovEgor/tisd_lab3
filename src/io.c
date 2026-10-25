@@ -99,6 +99,7 @@ error_code mechanic_matr_input(Matr **matr, size_t rows, size_t cols, size_t *nn
                 clear_input_buffer();
                 elem_rc = input_matr_one_elem(*matr, i + 1);
             }
+            clear_input_buffer();
         }
     }
     return rc;

@@ -1,16 +1,13 @@
 #include "matr_opers.h"
 
-void standard_matr_addition(const Matr *matr1, const Matr *matr2, Matr *matr_res, size_t *nnz)
+void standard_matr_addition(const Matr *matr1, const Matr *matr2, Matr *matr_res)
 {
-    *nnz = 0;
     matr_res->rows = matr1->rows;
     matr_res->cols = matr1->cols;
     for (size_t i = 0; i < matr1->rows; i++)
         for (size_t j = 0; j < matr1->cols; j++)
         {
             int sum = matr1->matr[i][j] + matr2->matr[i][j];
-            if (sum != 0)
-                (*nnz)++;
             matr_res->matr[i][j] = sum;
         }
 }

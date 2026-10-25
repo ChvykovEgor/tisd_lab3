@@ -16,14 +16,6 @@ typedef struct
 
 typedef struct
 {
-    double fill;
-    double speedup;
-    double mem_gain;
-    int match;
-} BenchResult;
-
-typedef struct
-{
     size_t rows;
     size_t cols;
     size_t nnz;

@@ -72,12 +72,9 @@ error_code menu_full_matr_sum(const Matr *matr1, const Matr *matr2)
     if (matr_res == NULL)
         return ERR_MEMORY_ALLOC;
 
-    size_t nnz;
-    standard_matr_addition(matr1, matr2, matr_res, &nnz);
-    printf("Результат сложения: матрица %zu x %zu, ненулевых элементов: %zu\n",
-           matr_res->rows, matr_res->cols, nnz);
-    if (nnz == 0)
-        printf("Результат - нулевая матрица\n");
+    standard_matr_addition(matr1, matr2, matr_res);
+    printf("Результат сложения: матрица %zu x %zu",
+           matr_res->rows, matr_res->cols);
     print_matr_standard(matr_res, "Результат сложения стандартных матриц");
     free(matr_res);
     return ERR_OK;
@@ -131,6 +128,7 @@ error_code menu_input_matrs(Matr **matr, MatrCSC **matr_csc, size_t rows, size_t
            "2 - Случайно с указанием процента заполнения\n");
         clear_input_buffer();
     }
+    clear_input_buffer();
     size_t nnz;
     switch (chosen)
     {
@@ -166,5 +164,6 @@ error_code input_menu_var(int *chosen)
         rc = ERR_CHOSE_MENU;
         clear_input_buffer();
     }
+    clear_input_buffer();
     return rc;
 }
