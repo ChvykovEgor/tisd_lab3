@@ -79,16 +79,11 @@ error_code mechanic_matr_input(Matr **matr, size_t rows, size_t cols, size_t *nn
     error_code rc = general_matr_input(matr, rows, cols);
     if (rc == ERR_OK)
     {
-        while (input_no_zero_count(nnz, (*matr)->rows * (*matr)->cols) != ERR_OK)
+        error_code elem_rc = ERR_OK;
+        for (*nnz = 0; elem_rc != INPUT_EXIT && *nnz <= (*matr)->rows * (*matr)->cols; (*nnz)++)
         {
-            printf("Число ненулевых элементов введено неверно\n");
-            clear_input_buffer();
-        }
-        clear_input_buffer();
-        for (size_t i = 0; i < *nnz; i++)
-        {
-            error_code elem_rc = input_matr_one_elem(*matr, i + 1);
-            while (elem_rc != ERR_OK)
+            elem_rc = input_matr_one_elem(*matr, *nnz + 1);
+            while (elem_rc != ERR_OK && elem_rc != INPUT_EXIT)
             {
                 if (elem_rc == ERR_MATR_INPUT)
                     printf("Числа введены неверно. Повторите попытку\n");
@@ -97,10 +92,12 @@ error_code mechanic_matr_input(Matr **matr, size_t rows, size_t cols, size_t *nn
                 else if (elem_rc == ERR_ELEM_ALREADY_EXIST)
                     printf("Вы уже ввели элемент на данной позиции. Повторите попытку\n");
                 clear_input_buffer();
-                elem_rc = input_matr_one_elem(*matr, i + 1);
+                elem_rc = input_matr_one_elem(*matr, *nnz + 1);
             }
             clear_input_buffer();
         }
+        (*nnz)--;
+        printf("Ввод матрицы завершён.\n");
     }
     return rc;
 }
@@ -138,10 +135,14 @@ error_code input_matr_one_elem(Matr *matr, size_t num)
     error_code rc = ERR_OK;
     long long ll_i, ll_j;
     int elem;
-    printf("%zu. Введите 3 целых числа - индекс строки, столбца и ненулевой элемент матрицы. "
-           "Индекс строки и столбца не должны повторяться с теми, которые вы уже ввели. \n", num);
-    if (scanf("%lld%lld%d", &ll_i, &ll_j, &elem) != 3 || ll_i < 0 || ll_j < 0 ||
-        (size_t) ll_i >= matr->rows || (size_t) ll_j >= matr->cols)
+    printf("%zu. Введите 3 целых числа - индекс строки, столбца и ненулевой элемент матрицы.\n"
+           "Индекс строки и столбца не должны повторяться с теми, которые вы уже ввели. Индексы нумеруются с нуля. "
+           "Для прекращения ввода введите отрицательный индекс строки или столбца\n", num);
+    if (scanf("%lld%lld%d", &ll_i, &ll_j, &elem) != 3)
+        rc = ERR_MATR_INPUT;
+    else if (ll_i < 0 || ll_j < 0)
+        rc = INPUT_EXIT;
+    else if ((size_t) ll_i >= matr->rows || (size_t) ll_j >= matr->cols)
         rc = ERR_MATR_INPUT;
     else if (elem == 0)
         rc = ERR_ZERO_INPUT;
@@ -162,19 +163,6 @@ error_code input_matr_fill_percentage(size_t *percent)
         rc = ERR_MATR_INPUT;
     else
         *percent = (size_t) ll_percent;
-    return rc;
-}
-
-error_code input_no_zero_count(size_t *nnz, size_t max_nnz)
-{
-    error_code rc = ERR_OK;
-    long long ll_nnz;
-    printf("Введите целое число от 0 до %zu - количество ненулевых элементов:\n",
-           max_nnz);
-    if (scanf("%lld", &ll_nnz) != 1 || ll_nnz < 0 || (unsigned long long) ll_nnz > max_nnz)
-        rc = ERR_MATR_INPUT;
-    else
-        *nnz = (size_t) ll_nnz;
     return rc;
 }
 

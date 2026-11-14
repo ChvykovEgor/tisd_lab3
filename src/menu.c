@@ -73,8 +73,6 @@ error_code menu_full_matr_sum(const Matr *matr1, const Matr *matr2)
         return ERR_MEMORY_ALLOC;
 
     standard_matr_addition(matr1, matr2, matr_res);
-    printf("Результат сложения: матрица %zu x %zu",
-           matr_res->rows, matr_res->cols);
     print_matr_standard(matr_res, "Результат сложения стандартных матриц");
     free(matr_res);
     return ERR_OK;
@@ -164,6 +162,5 @@ error_code input_menu_var(int *chosen)
         rc = ERR_CHOSE_MENU;
         clear_input_buffer();
     }
-    clear_input_buffer();
     return rc;
 }
